@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDoS Attack Monitor - Live Map</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <h1>🌐 DDoS ATTACK MONITOR</h1>
+            <p class="subtitle">Live Cyber Threat Intelligence Dashboard</p>
+        </div>
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-number" id="totalAttacks">0</span>
+                <span class="stat-label">Total Attacks</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="activeAttacks">0</span>
+                <span class="stat-label">Active Now</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="threatLevel">LOW</span>
+                <span class="stat-label">Threat Level</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="map-container">
+            <div id="map"></div>
+            <div class="map-overlay">
+                <div class="legend">
+                    <h3>Attack Types</h3>
+                    <div class="legend-item">
+                        <span class="dot high"></span>
+                        <span>High Intensity</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="dot medium"></span>
+                        <span>Medium Intensity</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="dot low"></span>
+                        <span>Low Intensity</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="panel">
+                <h3>🔴 Live Attacks</h3>
+                <div id="attackLog" class="attack-log">
+                    <!-- Attack entries will be added here -->
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>📊 Statistics</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="bandwidthUsed">0 Gbps</div>
+                        <div class="stat-title">Bandwidth Used</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="packetsPerSec">0 M</div>
+                        <div class="stat-title">Packets/sec</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="targetCountries">0</div>
+                        <div class="stat-title">Target Countries</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>🎯 Top Targets</h3>
+                <div id="topTargets" class="target-list">
+                    <!-- Top targets will be listed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>⚠️ This is a demonstration dashboard. All data is simulated for educational purposes.</p>
+        <p>Last updated: <span id="lastUpdate">--</span></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
