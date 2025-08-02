@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DDoS Attack Monitor - Live Map</title>
+    <title>Advanced DDoS Attack Monitor - Real-time Cyber Threat Intelligence</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
 </head>
 <body>
     <div class="header">
         <div class="logo">
-            <h1>🌐 DDoS ATTACK MONITOR</h1>
-            <p class="subtitle">Live Cyber Threat Intelligence Dashboard</p>
+            <h1>🛡️ ADVANCED DDoS MONITOR</h1>
+            <p class="subtitle">Real-time Cyber Threat Intelligence & Network Security Dashboard</p>
         </div>
         <div class="stats">
             <div class="stat-item">
@@ -28,6 +29,10 @@
                 <span class="stat-number" id="threatLevel">LOW</span>
                 <span class="stat-label">Threat Level</span>
             </div>
+            <div class="stat-item">
+                <span class="stat-number" id="responseTime">0ms</span>
+                <span class="stat-label">Avg Response</span>
+            </div>
         </div>
     </div>
 
@@ -36,61 +41,97 @@
             <div id="map"></div>
             <div class="map-overlay">
                 <div class="legend">
-                    <h3>Attack Types</h3>
+                    <h3>🎯 Attack Intensity</h3>
                     <div class="legend-item">
                         <span class="dot high"></span>
-                        <span>High Intensity</span>
+                        <span>Critical (100+ Gbps)</span>
                     </div>
                     <div class="legend-item">
                         <span class="dot medium"></span>
-                        <span>Medium Intensity</span>
+                        <span>High (25-100 Gbps)</span>
                     </div>
                     <div class="legend-item">
                         <span class="dot low"></span>
-                        <span>Low Intensity</span>
+                        <span>Medium (5-25 Gbps)</span>
                     </div>
+                    <div class="status-indicator status-active"></span>
+                    <span style="font-size: 0.8rem; color: #00ff88;">System Online</span>
                 </div>
             </div>
         </div>
 
         <div class="sidebar">
             <div class="panel">
-                <h3>🔴 Live Attacks</h3>
+                <h3>🚨 Live Attack Feed</h3>
                 <div id="attackLog" class="attack-log">
                     <!-- Attack entries will be added here -->
                 </div>
             </div>
 
             <div class="panel">
-                <h3>📊 Statistics</h3>
+                <h3>📊 Network Statistics</h3>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-value" id="bandwidthUsed">0 Gbps</div>
+                        <div class="stat-value" id="bandwidthUsed">0.0 Gbps</div>
                         <div class="stat-title">Bandwidth Used</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-value" id="packetsPerSec">0 M</div>
+                        <div class="stat-value" id="packetsPerSec">0.00 M</div>
                         <div class="stat-title">Packets/sec</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value" id="targetCountries">0</div>
                         <div class="stat-title">Target Countries</div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgPacketSize">0 bytes</div>
+                        <div class="stat-title">Avg Packet Size</div>
+                    </div>
                 </div>
             </div>
 
             <div class="panel">
-                <h3>🎯 Top Targets</h3>
+                <h3>🎯 Top Attack Targets</h3>
                 <div id="topTargets" class="target-list">
                     <!-- Top targets will be listed here -->
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>🔍 Attack Analysis</h3>
+                <div class="analysis-grid">
+                    <div class="analysis-item">
+                        <span class="analysis-label">Most Common Protocol:</span>
+                        <span class="analysis-value" id="commonProtocol">TCP</span>
+                    </div>
+                    <div class="analysis-item">
+                        <span class="analysis-label">Peak Bandwidth:</span>
+                        <span class="analysis-value" id="peakBandwidth">0 Gbps</span>
+                    </div>
+                    <div class="analysis-item">
+                        <span class="analysis-label">Avg Attack Duration:</span>
+                        <span class="analysis-value" id="avgDuration">0m</span>
+                    </div>
+                    <div class="analysis-item">
+                        <span class="analysis-label">Packet Loss Rate:</span>
+                        <span class="analysis-value" id="packetLoss">0%</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="footer">
-        <p>⚠️ This is a demonstration dashboard. All data is simulated for educational purposes.</p>
-        <p>Last updated: <span id="lastUpdate">--</span></p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <p>⚠️ <strong>DEMONSTRATION DASHBOARD</strong> - All data is simulated for educational purposes</p>
+                <p>Last updated: <span id="lastUpdate">--</span> | System Status: <span class="status-indicator status-active"></span> Online</p>
+            </div>
+            <div class="footer-section">
+                <p>🛡️ Advanced Threat Detection System v2.1.0</p>
+                <p>Real-time Network Traffic Analysis & DDoS Mitigation</p>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
