@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ACHTUNG: Simulierte Viruswarnung (nur Spaß!)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="banner">
+    <div class="title">⚠️ SIMULIERTE VIRUSWARNUNG</div>
+    <div class="subtitle">Dies ist NUR eine Demo/Prank-Seite. Es passiert nichts auf deinem Gerät.</div>
+  </div>
+  <main>
+    <section class="screen">
+      <div class="scan">
+        <div class="radar"></div>
+        <div class="blips" aria-hidden="true"></div>
+      </div>
+      <div class="log" id="log" aria-live="polite"></div>
+    </section>
+    <section class="cta">
+      <button id="startBtn">Scan starten</button>
+      <button id="stopBtn" class="ghost">Scan stoppen</button>
+    </section>
+    <footer>
+      <p>Hinweis: Diese Seite ist harmlos und zu Demonstrationszwecken. Kein echter Scan, keine Daten werden gesammelt.</p>
+    </footer>
+  </main>
+  <div id="modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <h2 id="modalTitle">Alles gut ✅</h2>
+      <p>Dies war nur eine simulierte Warnung. Nichts wurde installiert oder verändert.</p>
+      <button id="closeModal">Verstanden</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
