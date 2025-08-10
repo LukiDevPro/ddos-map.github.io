@@ -143,3 +143,5 @@ body {
   cursor: pointer;
 }
 .btn:hover { filter: brightness(1.05); }
+
+.messages li { display: grid; grid-template-columns: 88px 1fr; gap: 8px; align-items: center; }
