@@ -83,6 +83,9 @@
     topTargets: document.getElementById('top-targets'),
     threatLevel: document.getElementById('threat-level'),
     threatBadge: document.getElementById('threat-badge'),
+    messageForm: document.getElementById('message-form'),
+    messageInput: document.getElementById('message-input'),
+    messagesList: document.getElementById('messages-list'),
   };
 
   // Map initialisieren
@@ -119,6 +122,16 @@
 
   function formatGbps(num) {
     return (Math.round(num * 10) / 10).toFixed(1);
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, (ch) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;',
+    })[ch]);
   }
 
   function computeIntensity(bandwidthGbps) {
@@ -334,6 +347,28 @@
 
   // initial UI paint
   updateStats();
+
+  if (dom.messageForm && dom.messageInput && dom.messagesList) {
+    dom.messageForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const text = dom.messageInput.value.trim();
+      if (!text) return;
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      const ss = String(now.getSeconds()).padStart(2, '0');
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <span class="log-time">${hh}:${mm}:${ss}</span>
+        <span class="log-main">${escapeHtml(text)}</span>
+      `;
+      dom.messagesList.prepend(li);
+      while (dom.messagesList.children.length > 100) {
+        dom.messagesList.removeChild(dom.messagesList.lastChild);
+      }
+      dom.messageInput.value = '';
+    });
+  }
 
   // start loop
   setInterval(tick, config.tickMs);

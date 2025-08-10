@@ -117,3 +117,29 @@ body {
   #map { height: 52vh; }
   .logs { max-height: 32vh; }
 }
+
+/* Messages input */
+.input-row { display: flex; gap: 8px; margin-top: 8px; }
+.text-input {
+  flex: 1;
+  height: 36px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--elev-strong);
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+  outline: none;
+}
+.text-input::placeholder { color: var(--muted); }
+.text-input:focus { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(0,194,255,0.18); }
+.btn {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--elev-strong);
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+  color: #061219;
+  font-weight: 800;
+  cursor: pointer;
+}
+.btn:hover { filter: brightness(1.05); }
