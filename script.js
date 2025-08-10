@@ -2,6 +2,8 @@
 class DDoSMonitor {
     constructor() {
         this.map = null;
+        this.globe = null;
+        this.globePoints = [];
         this.attackMarkers = [];
         this.totalAttacks = 0;
         this.activeAttacks = 0;
@@ -18,27 +20,41 @@ class DDoSMonitor {
     }
 
     init() {
-        this.initMap();
+        this.initGlobe();
         this.initStats();
         this.startSimulation();
         this.updateLastUpdate();
         this.initNetworkMonitoring();
     }
 
-    initMap() {
-        // Initialize Leaflet map with enhanced styling
-        this.map = L.map('map').setView([20, 0], 2);
-        
-        // Add dark tile layer with better attribution
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '©OpenStreetMap, ©CartoDB',
-            subdomains: 'abcd',
-            maxZoom: 19
-        }).addTo(this.map);
+    initGlobe() {
+        const container = document.getElementById('map');
+        const width = container.clientWidth;
+        const height = container.clientHeight;
 
-        // Add custom map style
-        this.map.on('load', () => {
-            document.querySelector('.leaflet-container').style.background = '#1a1a2e';
+        this.globe = Globe()
+            .width(width)
+            .height(height)
+            .backgroundColor('#1a1a2e')
+            .globeImageUrl('https://unpkg.com/three-globe@2.31.1/example/img/earth-dark.jpg')
+            .bumpImageUrl('https://unpkg.com/three-globe@2.31.1/example/img/earth-topology.png')
+            .pointsData(this.globePoints)
+            .pointColor(d => d.color)
+            .pointAltitude(d => d.altitude)
+            .pointRadius(0.15)
+            .pointLabel(d => `<div class="globe-tooltip">${d.label}</div>`)(container);
+
+        // Auto-rotate for a dynamic globe effect
+        const controls = this.globe.controls();
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.8;
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            this.globe.width(w);
+            this.globe.height(h);
         });
     }
 
@@ -267,50 +283,41 @@ class DDoSMonitor {
             high: '#ff4444'
         };
 
-        const sizes = {
-            low: 10,
-            medium: 15,
-            high: 22
+        const altitudes = {
+            low: 0.02,
+            medium: 0.03,
+            high: 0.05
         };
 
-        const marker = L.circleMarker(attack.coords, {
-            radius: sizes[attack.intensity],
-            fillColor: colors[attack.intensity],
+        const [lat, lng] = attack.coords;
+
+        const label = [
+            `🚨 ${attack.type}`,
+            `Target: ${attack.target} (${attack.countryCode})`,
+            `Intensity: ${attack.intensity.toUpperCase()}`,
+            `Protocol: ${attack.protocol}`,
+            `Bandwidth: ${attack.bandwidth} Gbps`,
+            `Packets/sec: ${attack.packetsPerSec.toLocaleString()}`,
+            `Dest Port: ${attack.destinationPort}`
+        ].join('\n');
+
+        const point = {
+            lat,
+            lng,
             color: colors[attack.intensity],
-            weight: 3,
-            opacity: 1,
-            fillOpacity: 0.8
-        }).addTo(this.map);
+            altitude: altitudes[attack.intensity],
+            label,
+            endTime: Date.now() + (attack.duration * 1000)
+        };
 
-        // Enhanced popup with more detailed information
-        const popupContent = `
-            <div class="attack-popup">
-                <h3>🚨 ${attack.type}</h3>
-                <p><strong>Target:</strong> ${attack.target} (${attack.countryCode})</p>
-                <p><strong>Intensity:</strong> <span style="color: ${colors[attack.intensity]}">${attack.intensity.toUpperCase()}</span></p>
-                <p><strong>Protocol:</strong> ${attack.protocol}</p>
-                <p><strong>Bandwidth:</strong> ${attack.bandwidth} Gbps</p>
-                <p><strong>Packets/sec:</strong> ${attack.packetsPerSec.toLocaleString()}</p>
-                <p><strong>Source:</strong> ${attack.source}:${attack.sourcePort}</p>
-                <p><strong>Destination:</strong> *:${attack.destinationPort}</p>
-                <p><strong>Packet Size:</strong> ${attack.packetSize} bytes</p>
-                <p><strong>TTL:</strong> ${attack.ttl}</p>
-                <p><strong>Flags:</strong> ${attack.flags}</p>
-                <p><strong>Signature:</strong> ${attack.signature}</p>
-                <p><strong>Mitigation:</strong> ${attack.mitigation}</p>
-                <p><strong>Duration:</strong> ${Math.floor(attack.duration / 60)}m ${attack.duration % 60}s</p>
-            </div>
-        `;
-
-        marker.bindPopup(popupContent);
-
-        // Add enhanced pulsing animation
-        marker.getElement()?.classList.add('pulse');
+        this.globePoints.push(point);
+        if (this.globe) {
+            this.globe.pointsData(this.globePoints);
+        }
 
         this.attackMarkers.push({
-            marker: marker,
             attack: attack,
-            endTime: Date.now() + (attack.duration * 1000)
+            endTime: point.endTime
         });
     }
 
@@ -463,13 +470,11 @@ class DDoSMonitor {
 
     cleanupExpiredAttacks() {
         const now = Date.now();
-        this.attackMarkers = this.attackMarkers.filter(({ marker, attack, endTime }) => {
-            if (now > endTime) {
-                marker.remove();
-                return false;
-            }
-            return true;
-        });
+        this.attackMarkers = this.attackMarkers.filter(({ attack, endTime }) => now <= endTime);
+        this.globePoints = this.globePoints.filter(p => now <= p.endTime);
+        if (this.globe) {
+            this.globe.pointsData(this.globePoints);
+        }
         this.activeAttacks = this.attackMarkers.length;
     }
 

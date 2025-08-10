@@ -130,6 +130,11 @@ body::before {
     border-radius: 18px;
 }
 
+#map canvas {
+    outline: none;
+    border-radius: 18px;
+}
+
 .map-overlay {
     position: absolute;
     top: 25px;
@@ -531,51 +536,11 @@ body::before {
     animation: pulse 2s infinite;
 }
 
-/* Custom Leaflet Styles */
-.leaflet-container {
-    background: #1a1a2e !important;
+/* Globe styles */
+.globe-tooltip {
+    white-space: pre;
 }
 
-.leaflet-popup-content-wrapper {
-    background: rgba(0, 0, 0, 0.95) !important;
-    color: #fff !important;
-    border: 2px solid #00ff88 !important;
-    border-radius: 15px !important;
-    box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3) !important;
-    backdrop-filter: blur(15px) !important;
-}
-
-.leaflet-popup-tip {
-    background: rgba(0, 0, 0, 0.95) !important;
-    border: 2px solid #00ff88 !important;
-}
-
-.attack-popup {
-    font-family: 'Orbitron', monospace;
-    padding: 0.5rem;
-}
-
-.attack-popup h3 {
-    color: #00ff88;
-    margin-bottom: 0.8rem;
-    font-size: 1.1rem;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.attack-popup p {
-    margin-bottom: 0.4rem;
-    font-size: 0.85rem;
-    line-height: 1.4;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 0.3rem;
-}
-
-.attack-popup p:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
 
 /* Analysis Grid */
 .analysis-grid {
