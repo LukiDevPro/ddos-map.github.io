@@ -29,6 +29,10 @@ class DDoSMonitor {
 
     initGlobe() {
         const container = document.getElementById('map');
+        if (!container) {
+            console.error('Globe container #map not found');
+            return;
+        }
         const width = container.clientWidth;
         const height = container.clientHeight;
 
@@ -36,8 +40,8 @@ class DDoSMonitor {
             .width(width)
             .height(height)
             .backgroundColor('#1a1a2e')
-            .globeImageUrl('https://unpkg.com/three-globe@2.31.1/example/img/earth-dark.jpg')
-            .bumpImageUrl('https://unpkg.com/three-globe@2.31.1/example/img/earth-topology.png')
+            .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-night.jpg')
+            .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
             .pointsData(this.globePoints)
             .pointColor(d => d.color)
             .pointAltitude(d => d.altitude)
