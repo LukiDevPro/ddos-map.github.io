@@ -3,85 +3,45 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DDoS Attack Monitor – Live Map (Simulation)</title>
-  <meta name="description" content="Interaktive, simulierte DDoS-Angriffs-Visualisierung mit Live-Weltkarte und Echtzeit-Statistiken. Bildungsdemo – keine echten Daten." />
+  <title>Neon Space Shooter</title>
+  <meta name="description" content="Arcade-Weltraumspiel im Browser. Steuere dein Schiff, weiche Asteroiden aus und sammle Punkte!" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <header class="app-header">
-    <div class="brand">
-      <span class="logo-dot"></span>
-      <h1>DDoS Attack Monitor <span class="muted">– Simulation</span></h1>
+  <header class="game-header">
+    <h1>Neon Space Shooter</h1>
+    <div class="hud">
+      <div>Score: <span id="score">0</span></div>
+      <div>Leben: <span id="lives">3</span></div>
+      <div>Level: <span id="level">1</span></div>
     </div>
-    <div class="threat-badge" id="threat-badge">Bedrohungsstufe: <strong id="threat-level">Niedrig</strong></div>
   </header>
 
-  <main class="layout">
-    <section class="sidebar">
-      <div class="panel">
-        <h2>Live-Metriken</h2>
-        <div class="stats-grid">
-          <div class="stat">
-            <div class="label">Gesamtangriffe</div>
-            <div class="value" id="total-attacks">0</div>
-          </div>
-          <div class="stat">
-            <div class="label">Aktive Angriffe</div>
-            <div class="value" id="active-attacks">0</div>
-          </div>
-          <div class="stat">
-            <div class="label">Bandbreite (Gbps)</div>
-            <div class="value" id="total-bandwidth">0.0</div>
-          </div>
-          <div class="stat">
-            <div class="label">Pakete / Sek.</div>
-            <div class="value" id="total-pps">0</div>
-          </div>
-          <div class="stat">
-            <div class="label">Ziel-Länder</div>
-            <div class="value" id="affected-countries">0</div>
-          </div>
+  <main class="game-wrap">
+    <canvas id="game" width="900" height="600"></canvas>
+    <div id="overlay" class="overlay hidden">
+      <div class="card">
+        <h2 id="overlay-title">Neon Space Shooter</h2>
+        <p id="overlay-sub">Drücke Enter, um zu starten</p>
+        <div class="help">
+          <p>Steuerung:</p>
+          <ul>
+            <li>Pfeiltasten oder WASD: Bewegen</li>
+            <li>Leertaste: Schießen</li>
+            <li>Enter: Start/Pause</li>
+          </ul>
         </div>
       </div>
-
-      <div class="panel">
-        <h2>Top-Ziele</h2>
-        <ul id="top-targets" class="list"></ul>
-      </div>
-
-      <div class="panel">
-        <h2>Nachricht senden</h2>
-        <form id="message-form" class="input-row">
-          <input id="message-input" class="text-input" type="text" placeholder="Schreibe eine Nachricht..." maxlength="200" />
-          <button class="btn" type="submit">Posten</button>
-        </form>
-        <ul id="messages-list" class="list messages"></ul>
-      </div>
-
-      <div class="panel info">
-        <h3>Hinweis</h3>
-        <p>Dies ist eine <strong>Simulation</strong> zu Bildungszwecken. Alle Daten sind synthetisch. Es werden keine realen Netzwerke angegriffen oder ausgewertet.</p>
-      </div>
-    </section>
-
-    <section class="map-wrap">
-      <div id="map"></div>
-      <div class="panel logs">
-        <h2>Angriffs-Log</h2>
-        <ul id="attack-log" class="list log-list"></ul>
-      </div>
-    </section>
+    </div>
   </main>
 
-  <footer class="app-footer">
-    <span>© Bildungsdemo – keine echten Angriffe. Karten-Daten © OpenStreetMap-Mitwirkende.</span>
+  <footer class="game-footer">
+    <span>© Ein kleines Browser-Arcade-Spiel</span>
   </footer>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="./script.js"></script>
+  <script src="./game.js"></script>
 </body>
 </html>
