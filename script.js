@@ -13,6 +13,7 @@ class DDoSMonitor {
             averageResponseTime: 0,
             packetLoss: 0
         };
+        this.forceCriticalMode = true;
         this.init();
     }
 
@@ -108,6 +109,8 @@ class DDoSMonitor {
         const lat = country.coords[0] + (Math.random() - 0.5) * 8;
         const lng = country.coords[1] + (Math.random() - 0.5) * 8;
 
+        const selectedIntensity = this.forceCriticalMode ? { level: 'high' } : intensity;
+
         const attack = {
             id: Date.now() + Math.random(),
             type: attackType.name,
@@ -115,10 +118,10 @@ class DDoSMonitor {
             protocol: attackType.protocol,
             target: country.name,
             countryCode: country.iso,
-            intensity: intensity.level,
+            intensity: selectedIntensity.level,
             coords: [lat, lng],
-            bandwidth: this.generateBandwidth(intensity.level),
-            packetsPerSec: this.generatePacketsPerSec(intensity.level),
+            bandwidth: this.forceCriticalMode ? Math.floor(Math.random() * 400) + 200 : this.generateBandwidth(intensity.level),
+            packetsPerSec: this.forceCriticalMode ? Math.floor(Math.random() * 400000) + 300000 : this.generatePacketsPerSec(intensity.level),
             duration: Math.floor(Math.random() * 600) + 120, // 2-12 minutes
             timestamp: new Date(),
             source: this.generateSourceIP(),
@@ -402,23 +405,29 @@ class DDoSMonitor {
         packetLossElement.textContent = `${packetLossRate.toFixed(1)}%`;
 
         // Enhanced threat level calculation
-        const threatScore = this.activeAttacks * (totalBandwidth / 100);
-        if (threatScore > 1000) {
+        if (this.forceCriticalMode) {
             threatElement.textContent = 'CRITICAL';
             threatElement.style.color = '#ff4444';
             threatElement.style.textShadow = '0 0 10px #ff4444';
-        } else if (threatScore > 500) {
-            threatElement.textContent = 'HIGH';
-            threatElement.style.color = '#ffaa00';
-            threatElement.style.textShadow = '0 0 10px #ffaa00';
-        } else if (threatScore > 200) {
-            threatElement.textContent = 'MEDIUM';
-            threatElement.style.color = '#ffaa00';
-            threatElement.style.textShadow = '0 0 10px #ffaa00';
         } else {
-            threatElement.textContent = 'LOW';
-            threatElement.style.color = '#00ff88';
-            threatElement.style.textShadow = '0 0 10px #00ff88';
+            const threatScore = this.activeAttacks * (totalBandwidth / 100);
+            if (threatScore > 1000) {
+                threatElement.textContent = 'CRITICAL';
+                threatElement.style.color = '#ff4444';
+                threatElement.style.textShadow = '0 0 10px #ff4444';
+            } else if (threatScore > 500) {
+                threatElement.textContent = 'HIGH';
+                threatElement.style.color = '#ffaa00';
+                threatElement.style.textShadow = '0 0 10px #ffaa00';
+            } else if (threatScore > 200) {
+                threatElement.textContent = 'MEDIUM';
+                threatElement.style.color = '#ffaa00';
+                threatElement.style.textShadow = '0 0 10px #ffaa00';
+            } else {
+                threatElement.textContent = 'LOW';
+                threatElement.style.color = '#00ff88';
+                threatElement.style.textShadow = '0 0 10px #00ff88';
+            }
         }
     }
 
@@ -484,7 +493,7 @@ class DDoSMonitor {
             
             // More attacks during peak hours (business hours and evening)
             const isPeakHour = (currentTime >= 9 && currentTime <= 17) || (currentTime >= 19 && currentTime <= 23);
-            const baseChance = isPeakHour ? 0.7 : 0.4;
+            const baseChance = this.forceCriticalMode ? 0.95 : (isPeakHour ? 0.7 : 0.4);
             
             if (chance < baseChance) { // Normal attack
                 const attack = this.generateRandomAttack();
@@ -495,7 +504,7 @@ class DDoSMonitor {
                 this.updateTopTargets();
             } else if (chance < baseChance + 0.15) { // Coordinated attack (15% chance)
                 // Generate multiple attacks in quick succession
-                const numAttacks = Math.floor(Math.random() * 3) + 2;
+                const numAttacks = this.forceCriticalMode ? Math.floor(Math.random() * 4) + 4 : Math.floor(Math.random() * 3) + 2;
                 for (let i = 0; i < numAttacks; i++) {
                     setTimeout(() => {
                         const attack = this.generateRandomAttack();
