@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDoS Attack Map</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="stats-container">
+        <h1>Live Attack Feed</h1>
+        <div id="stats">
+            <p><strong>Incoming Packets:</strong> <span id="packets">0</span> pps</p>
+            <p><strong>Traffic Volume:</strong> <span id="volume">0.00</span> Gbps</p>
+            <p><strong>Active Attackers:</strong> <span id="attackers">0</span></p>
+        </div>
+    </div>
+    <canvas id="mapCanvas"></canvas>
+    <script src="script.js"></script>
+</body>
+</html>

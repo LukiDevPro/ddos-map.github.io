@@ -1,19 +1,12 @@
-# Neon Space Shooter
+# Fake DDoS Map
 
-Ein kleines, schnelles Arcade-Weltraumspiel im Browser. Keine Frameworks, nur Canvas.
+A simulated DDoS attack map visualization. This project uses HTML Canvas and vanilla JavaScript to create an animated map showing fictional attack traffic from various points to a central target.
 
-## Steuerung
-- Pfeiltasten oder WASD: Bewegen
-- Leertaste: Schießen
-- Enter: Start/Pause
+## Features
+- Animated attack lines
+- Fake real-time statistics
+- Dark, "hacker"-style theme
 
-## Spielprinzip
-- Weiche Asteroiden aus und schieße sie ab.
-- Erhöhe deinen Score, alle 120 Punkte steigst du ein Level auf (mehr/ schnellere Asteroiden).
-- Du hast 3 Leben. Bei Kollision wirst du kurz unverwundbar.
-
-## Lokales Starten
-- Öffne `index.html` direkt im Browser oder starte einen Static-Server und besuche `http://localhost:8080`.
-
-## Deployment
-- Das Repository deployt via GitHub Pages (Actions Workflow). Änderungen auf `main` werden automatisch veröffentlicht. 
+## How to Run
+- Simply open the `index.html` file in a web browser.
+- Alternatively, you can use a local web server.
