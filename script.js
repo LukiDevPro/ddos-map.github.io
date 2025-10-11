@@ -1,149 +1,89 @@
-const canvas = document.getElementById('mapCanvas');
-const ctx = canvas.getContext('2d');
-
-// Set canvas size to full window size
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
 // Stats elements
 const packetsEl = document.getElementById('packets');
 const volumeEl = document.getElementById('volume');
 const attackersEl = document.getElementById('attackers');
 
-// --- Configuration ---
-const TARGET = { x: canvas.width / 2, y: canvas.height / 2 };
-const ATTACKER_COUNT = 20;
-const PARTICLE_SPEED = 2;
-const PARTICLE_LIFESPAN = 300; // frames
+// --- Map Initialization ---
+const map = L.map('map', {
+    center: [20, 0], // Initial center of the map
+    zoom: 2,         // Initial zoom level
+    minZoom: 2,      // Minimum zoom level
+    maxZoom: 10,     // Maximum zoom level
+    zoomControl: false // Hide the default zoom control
+});
 
-let attackers = [];
-let particles = [];
-
-// --- Classes ---
-class Attacker {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.radius = 5;
-    }
-
-    draw() {
-        ctx.fillStyle = '#ff0000'; // Red for attackers
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fill();
-    }
-}
-
-class Particle {
-    constructor(startX, startY) {
-        this.x = startX;
-        this.y = startY;
-        this.life = PARTICLE_LIFESPAN;
-
-        const angle = Math.atan2(TARGET.y - this.y, TARGET.x - this.x);
-        this.vx = Math.cos(angle) * PARTICLE_SPEED;
-        this.vy = Math.sin(angle) * PARTICLE_SPEED;
-    }
-
-    update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.life--;
-    }
-
-    draw() {
-        // Fade out as it gets closer to the end of its life
-        const alpha = Math.max(0, this.life / PARTICLE_LIFESPAN);
-        ctx.fillStyle = `rgba(0, 255, 0, ${alpha})`;
-        ctx.fillRect(this.x, this.y, 2, 2);
-    }
-}
+// Use a dark tile layer from CartoDB
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+}).addTo(map);
 
 // --- Functions ---
-function setup() {
-    // Create attackers at random positions on the edge of the screen
-    for (let i = 0; i < ATTACKER_COUNT; i++) {
-        let x, y;
-        if (Math.random() > 0.5) {
-            // Top or bottom edge
-            x = Math.random() * canvas.width;
-            y = Math.random() > 0.5 ? 0 : canvas.height;
-        } else {
-            // Left or right edge
-            x = Math.random() > 0.5 ? 0 : canvas.width;
-            y = Math.random() * canvas.height;
-        }
-        attackers.push(new Attacker(x, y));
-    }
-    attackersEl.textContent = ATTACKER_COUNT;
-
-    // Start the animation loop
-    animate();
-}
-
 function updateStats() {
+    // This can be updated later with real data
     const packetCount = Math.floor(Math.random() * 5000) + 15000;
     const volume = (Math.random() * 20 + 80).toFixed(2);
+    const attackerCount = Math.floor(Math.random() * 10) + 20;
 
     packetsEl.textContent = packetCount.toLocaleString();
     volumeEl.textContent = volume;
+    attackersEl.textContent = attackerCount;
 }
 
-function animate() {
-    // Fading effect for trails
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+// --- Functions ---
+function drawAttack(attack) {
+    const source = [attack.source.lat, attack.source.lon];
+    const target = [attack.target.lat, attack.target.lon];
 
-    // Draw target
-    ctx.fillStyle = '#00ff00';
-    ctx.beginPath();
-    ctx.arc(TARGET.x, TARGET.y, 10, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#00ff00';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(TARGET.x, TARGET.y, 15, 0, Math.PI * 2);
-    ctx.stroke();
+    // Draw a line
+    const line = L.polyline([source, target], { color: '#ff0000', weight: 1, opacity: 0.8 }).addTo(map);
 
+    // Draw source marker
+    const sourceMarker = L.circleMarker(source, {
+        radius: 3,
+        color: '#ff0000',
+        fillColor: '#f03',
+        fillOpacity: 0.8
+    }).addTo(map);
 
-    // Draw attackers
-    attackers.forEach(attacker => attacker.draw());
+    // Draw target marker with a popup
+    const targetMarker = L.circleMarker(target, {
+        radius: 5,
+        color: '#00ff00',
+        fillColor: '#0f0',
+        fillOpacity: 0.8
+    }).addTo(map);
 
-    // Create new particles
-    attackers.forEach(attacker => {
-        if (Math.random() > 0.95) { // Chance to spawn a particle each frame
-            particles.push(new Particle(attacker.x, attacker.y));
+    targetMarker.bindPopup(`<b>Target:</b> ${attack.target.city}<br><b>Company:</b> ${attack.company}`);
+}
+
+async function loadAndDisplayAttacks() {
+    try {
+        const response = await fetch('attacks.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    });
+        const attacks = await response.json();
 
-    // Update and draw particles
-    particles.forEach((particle, index) => {
-        particle.update();
-        particle.draw();
+        // Update the stats with the number of attackers
+        attackersEl.textContent = attacks.length;
 
-        // Remove dead particles
-        if (particle.life <= 0) {
-            particles.splice(index, 1);
-        }
-    });
+        // Draw each attack on the map
+        attacks.forEach(drawAttack);
 
-    // Update stats periodically
-    if (Math.random() > 0.8) {
-        updateStats();
+    } catch (error) {
+        console.error("Could not load or display attack data:", error);
     }
-
-    requestAnimationFrame(animate);
 }
+
 
 // --- Start ---
-setup();
+// Periodically update the stats to simulate live data
+setInterval(updateStats, 2000);
 
-// Handle window resize
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    TARGET.x = canvas.width / 2;
-    TARGET.y = canvas.height / 2;
-    // We could regenerate attackers here, but for simplicity we'll leave them.
-});
+// Initial call to populate stats
+updateStats();
+
+// Load the attack data and display it on the map
+loadAndDisplayAttacks();
