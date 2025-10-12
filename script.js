@@ -1,7 +1,8 @@
-// Stats elements
+// DOM Elements
 const packetsEl = document.getElementById('packets');
 const volumeEl = document.getElementById('volume');
 const attackersEl = document.getElementById('attackers');
+const feedList = document.getElementById('feed-list');
 
 // --- Map Initialization ---
 const map = L.map('map', {
@@ -24,36 +25,25 @@ function updateStats() {
     // This can be updated later with real data
     const packetCount = Math.floor(Math.random() * 5000) + 15000;
     const volume = (Math.random() * 20 + 80).toFixed(2);
-    const attackerCount = Math.floor(Math.random() * 10) + 20;
-
     packetsEl.textContent = packetCount.toLocaleString();
     volumeEl.textContent = volume;
-    attackersEl.textContent = attackerCount;
 }
 
-// --- Functions ---
+function addFeedItem(attack) {
+    const listItem = document.createElement('li');
+    listItem.innerHTML = `<span>[ATTACK]</span> Source: ${attack.source.city} -> Target: ${attack.target.city} (${attack.company})`;
+    feedList.appendChild(listItem);
+    // Scroll to the bottom of the feed to show the latest attack
+    feedList.scrollTop = feedList.scrollHeight;
+}
+
 function drawAttack(attack) {
     const source = [attack.source.lat, attack.source.lon];
     const target = [attack.target.lat, attack.target.lon];
 
-    // Draw a line
     const line = L.polyline([source, target], { color: '#ff0000', weight: 1, opacity: 0.8 }).addTo(map);
-
-    // Draw source marker
-    const sourceMarker = L.circleMarker(source, {
-        radius: 3,
-        color: '#ff0000',
-        fillColor: '#f03',
-        fillOpacity: 0.8
-    }).addTo(map);
-
-    // Draw target marker with a popup
-    const targetMarker = L.circleMarker(target, {
-        radius: 5,
-        color: '#00ff00',
-        fillColor: '#0f0',
-        fillOpacity: 0.8
-    }).addTo(map);
+    const sourceMarker = L.circleMarker(source, { radius: 3, color: '#ff0000', fillColor: '#f03', fillOpacity: 0.8 }).addTo(map);
+    const targetMarker = L.circleMarker(target, { radius: 5, color: '#00ff00', fillColor: '#0f0', fillOpacity: 0.8 }).addTo(map);
 
     targetMarker.bindPopup(`<b>Target:</b> ${attack.target.city}<br><b>Company:</b> ${attack.company}`);
 }
@@ -66,24 +56,22 @@ async function loadAndDisplayAttacks() {
         }
         const attacks = await response.json();
 
-        // Update the stats with the number of attackers
         attackersEl.textContent = attacks.length;
 
-        // Draw each attack on the map
-        attacks.forEach(drawAttack);
+        // Process attacks one by one with a delay to simulate a live feed
+        attacks.forEach((attack, index) => {
+            setTimeout(() => {
+                drawAttack(attack);
+                addFeedItem(attack);
+            }, index * 1500); // 1.5 second delay between each attack
+        });
 
     } catch (error) {
         console.error("Could not load or display attack data:", error);
     }
 }
 
-
 // --- Start ---
-// Periodically update the stats to simulate live data
 setInterval(updateStats, 2000);
-
-// Initial call to populate stats
 updateStats();
-
-// Load the attack data and display it on the map
 loadAndDisplayAttacks();
